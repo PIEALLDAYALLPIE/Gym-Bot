@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Gym-Bot a Discord Bot built using the `discord.py` library. The bot includes several commands to interact with users, such as listing commands, tracking workouts, and displaying user statistics.
+Gym-Bot is a Discord Bot built using the `discord.py` library. The bot includes several commands to interact with users, such as listing commands, tracking workouts, and displaying user statistics.
 
 The aim of this project is to motivate users to go to the gym as the "stats" page will always call out the user with the least gym trips.
 
