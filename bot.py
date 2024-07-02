@@ -69,27 +69,35 @@ async def commands(interaction: discord.Interaction):
 async def set(interaction: discord.Interaction,  member: discord.Member, number: int):
     user = interaction.user.global_name
     userset = member.global_name
-    statsdict[userset] = number
-    add_command('set', user)
-    await interaction.response.send_message(f'You have set {userset} to {number} workouts', ephemeral=True)
+    if userset == None:
+        await interaction.response.send_message('User not found or is a bot. Please try again.', ephemeral=True)
+    else:
+        statsdict[userset] = number
+        add_command('set', user)
+        if number == 1:
+            await interaction.response.send_message(f'You have set {userset} to {number} workout')
+        else:
+            await interaction.response.send_message(f'You have set {userset} to {number} workouts')
 
 
 @bot.tree.command(name='jim', description='Add a workout to total')
 async def jim(interaction: discord.Interaction):
+    embed=discord.Embed(title='Workout added!', description='')
+    embed.color = discord.Color.teal()
     user = interaction.user.global_name
     add_command('jim', user)
     if user not in statsdict:
         statsdict[user] = 1
-        await interaction.response.send_message(f'You have completed 1 workout')
+        await interaction.response.send_message(embed=embed.add_field(name=f'{user} has completed* `1` workout!', value='').set_thumbnail(url=interaction.user.avatar))
     
     else:
         statsdict[user] += 1
-        await interaction.response.send_message(f'You have completed {statsdict[user]} workouts')
+        await interaction.response.send_message(embed=embed.add_field(name=f'{user} has completed* `{statsdict[user]}` workouts!', value='').set_thumbnail(url=interaction.user.avatar))
 
 
 @bot.tree.command(name='stats', description='Total workouts per user')
 async def stats(interaction: discord.Interaction):
-    embed = discord.Embed(title='Stats', description='Total workouts per user')
+    embed = discord.Embed(title='Stats', description='')
     embed.color = discord.Color.green()
     user = interaction.user.global_name
     add_command('stats', user)
@@ -100,11 +108,14 @@ async def stats(interaction: discord.Interaction):
             least = statsdict[user]
             leastuser = user
     if least == 5000000:
-        embed.add_field(name='No workouts have been completed', value='get to work', inline=False)
+        embed.add_field(name='No workouts have been completed', value='', inline=False)
     else:
-        embed.add_field(name=(leastuser + ' has the least workouts with ' + str(least) + ' workouts'), value="punishment imminent", inline=False)
+        if least == 1:
+            embed.add_field(name=(leastuser + ' has the least workouts with `' + str(least) + '` workout'), value="", inline=False)
+        else:
+            embed.add_field(name=(leastuser + ' has the least workouts with `' + str(least) + '` workouts'), value="", inline=False)
     for user in statsdict:
-        embed.add_field(name=user, value=statsdict[user], inline=False)
+        embed.add_field(name=f'{user}:\t`{statsdict[user]}`', value='', inline=False)
     await interaction.response.send_message(embed=embed)
 
 
